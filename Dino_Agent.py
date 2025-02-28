@@ -217,7 +217,6 @@ def INIT(render=True, agentname=None):
             self.mini_batch_size = hyperparameters['mini_batch_size']
             # 1 = 100% random actions
             self.epsilon_init = hyperparameters['epsilon_init']
-            self.epsilon_last_value = hyperparameters['epsilon_init']
             # epsilon decay rate
             self.epsilon_decay = hyperparameters['epsilon_decay']
             # minimum epsilon value
@@ -401,7 +400,7 @@ def INIT(render=True, agentname=None):
                         file.write(log_message + '\n')
 
                     # Initiating last epsilon value
-                    epsilon = self.epsilon_last_value
+                    epsilon = self.hyperparameter_set["epsilon_last_value"]
                 else:
                     log_message = f"No model file found\nStarting from scratch"
                     print(log_message)
@@ -409,7 +408,7 @@ def INIT(render=True, agentname=None):
                         file.write(log_message + '\n')
 
                     # Initialize epsilon
-                    epsilon = self.hyperparameter_set["epsilon_last_value"]
+                    epsilon = self.epsilon_init
 
                 # Initialize replay memory
                 memory = ReplayMemory(maxlen=self.replay_memory_size)
