@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 import matplotlib
 from datetime import datetime, timedelta
 import argparse
+from collections import deque
+
 
 
 # Global variables
@@ -405,6 +407,10 @@ def INIT(render=True, agentname=None):
                     epsilon = checkpoint['epsilon']
                     steps = checkpoint['step_count']
                     best_reward = checkpoint['best_reward']
+
+                    # Restore replay memory
+                    memory = ReplayMemory(maxlen=self.replay_memory_size)
+                    memory.memory = deque(checkpoint['replay_memory'], maxlen=self.replay_memory_size)
                 else:
                     log_message = f"No model file found\nStarting from scratch"
                     print(log_message)
@@ -423,8 +429,8 @@ def INIT(render=True, agentname=None):
                     # Track best reward
                     best_reward = -999999
 
-                # Initialize replay memory
-                memory = ReplayMemory(maxlen=self.replay_memory_size)
+                    # Initialize replay memory
+                    memory = ReplayMemory(maxlen=self.replay_memory_size)
 
                 # Create target network and make it identical to the policy network
                 target_dqn = DQN(num_states, num_actions)
@@ -536,13 +542,13 @@ def INIT(render=True, agentname=None):
                         with open(self.LOG_FILE, 'a') as file:
                             file.write(log_message + '\n')
 
-                        # Saving the model
                         torch.save({
                             'model_state_dict': policy_dqn.state_dict(),
                             'optimizer_state_dict': self.optimizer.state_dict(),
                             'epsilon': epsilon,
                             'step_count': steps,
-                            'best_reward': episode_reward
+                            'best_reward': episode_reward,
+                            'replay_memory': list(memory.memory)  # Convert deque to a list for saving
                         }, self.MODEL_FILE)
 
                         best_reward = episode_reward
