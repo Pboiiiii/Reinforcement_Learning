@@ -400,14 +400,19 @@ def INIT(render=True, agentname=None):
                     # Loading the model
                     checkpoint = torch.load(self.MODEL_FILE)
                     policy_dqn.load_state_dict(checkpoint['model_state_dict'])
+                    self.optimizer = torch.optim.Adam(policy_dqn.parameters(), lr=self.learning_rate_a)
                     self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
                     epsilon = checkpoint['epsilon']
                     steps = checkpoint['step_count']
+                    best_reward = checkpoint['best_reward']
                 else:
                     log_message = f"No model file found\nStarting from scratch"
                     print(log_message)
                     with open(self.LOG_FILE, 'a') as file:
                         file.write(log_message + '\n')
+
+                    # Policy network optimizer, 'Adam' optimizer can be swapped with something else
+                    self.optimizer = torch.optim.Adam(policy_dqn.parameters(), lr=self.learning_rate_a)
 
                     # Initialize epsilon
                     epsilon = self.epsilon_init
@@ -415,8 +420,8 @@ def INIT(render=True, agentname=None):
                     # Counting steps
                     steps = 0
 
-                    # Policy network optimizer, 'Adam' optimizer can be swapped with something else
-                    self.optimizer = torch.optim.Adam(policy_dqn.parameters(), lr=self.learning_rate_a)
+                    # Track best reward
+                    best_reward = -999999
 
                 # Initialize replay memory
                 memory = ReplayMemory(maxlen=self.replay_memory_size)
@@ -427,9 +432,6 @@ def INIT(render=True, agentname=None):
 
                 # List to keep track of the epsilon decay
                 epsilon_history = []
-
-                # Track best reward
-                best_reward = -999999
 
             else:
                 # Load learned policy
@@ -539,7 +541,8 @@ def INIT(render=True, agentname=None):
                             'model_state_dict': policy_dqn.state_dict(),
                             'optimizer_state_dict': self.optimizer.state_dict(),
                             'epsilon': epsilon,
-                            'step_count': steps
+                            'step_count': steps,
+                            'best_reward': episode_reward
                         }, self.MODEL_FILE)
 
                         best_reward = episode_reward
