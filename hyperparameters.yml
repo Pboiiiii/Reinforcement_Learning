@@ -1,8 +1,7 @@
 dinochrome1:
   discount_factor_g: 0.99
-  epsilon_decay: 0.9995
+  epsilon_decay: 0.99995
   epsilon_init: 1
-  epsilon_last_value: 0.9975024987503127
   epsilon_min: 0.01
   fc1_nodes: 128
   learning_rate_a: 0.0001
