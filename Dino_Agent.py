@@ -200,30 +200,30 @@ def INIT(render=True, agentname=None):
             # Reading hyperparameters
             with open('hyperparameters.yml', 'r') as f:
                 all_hyperparameters_set = yaml.safe_load(f)
-                hyperparameters = all_hyperparameters_set[hyperparameter_set]
+                self.hyperparameters = all_hyperparameters_set[hyperparameter_set]
 
             self.hyperparameter_set = hyperparameter_set
 
             # Hyperparameters (adjustable)
             # learning rate (alpha)
-            self.learning_rate_a = hyperparameters['learning_rate_a']
+            self.learning_rate_a = self.hyperparameters['learning_rate_a']
             # discount rate (gamma)
-            self.discount_factor_g = hyperparameters['discount_factor_g']
+            self.discount_factor_g = self.hyperparameters['discount_factor_g']
             # number of steps the agent takes before syncing the policy and target network
-            self.network_sync_rate = hyperparameters['network_sync_rate']
+            self.network_sync_rate = self.hyperparameters['network_sync_rate']
             # size of replay memory
-            self.replay_memory_size = hyperparameters['replay_memory_size']
+            self.replay_memory_size = self.hyperparameters['replay_memory_size']
             # size of the training data set sampled from the replay memory
-            self.mini_batch_size = hyperparameters['mini_batch_size']
+            self.mini_batch_size = self.hyperparameters['mini_batch_size']
             # 1 = 100% random actions
-            self.epsilon_init = hyperparameters['epsilon_init']
+            self.epsilon_init = self.hyperparameters['epsilon_init']
             # epsilon decay rate
-            self.epsilon_decay = hyperparameters['epsilon_decay']
+            self.epsilon_decay = self.hyperparameters['epsilon_decay']
             # minimum epsilon value
-            self.epsilon_min = hyperparameters['epsilon_min']
+            self.epsilon_min = self.hyperparameters['epsilon_min']
             # stop training after reaching this number of rewards
-            self.stop_on_reward = hyperparameters['stop_on_reward']
-            self.fc1_nodes = hyperparameters['fc1_nodes']
+            self.stop_on_reward = self.hyperparameters['stop_on_reward']
+            self.fc1_nodes = self.hyperparameters['fc1_nodes']
 
             # Neural Network
             self.loss_fn = nn.MSELoss()
@@ -391,16 +391,18 @@ def INIT(render=True, agentname=None):
             if is_training:
                 # Checks whether the model of the file already exist, if so, loads it and trains from then on
                 if os.path.exists(os.path.join(f'D:\Python weas\RL\DQN_w_pytorch\{RUNS_DIR}', f'{self.hyperparameter_set}.pt')):
-                    # Loading the model
-                    policy_dqn.load_state_dict(torch.load(self.MODEL_FILE))
                     log_message = (f"Model file, {self.hyperparameter_set}.pt, found\n"
                                    f"Loading Model file: {self.hyperparameter_set}.pt")
                     print(log_message)
                     with open(self.LOG_FILE, 'a') as file:
                         file.write(log_message + '\n')
 
-                    # Initiating last epsilon value
-                    epsilon = self.hyperparameter_set["epsilon_last_value"]
+                    # Loading the model
+                    checkpoint = torch.load(self.MODEL_FILE)
+                    policy_dqn.load_state_dict(checkpoint['model_state_dict'])
+                    self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+                    epsilon = checkpoint['epsilon']
+                    steps = checkpoint['step_count']
                 else:
                     log_message = f"No model file found\nStarting from scratch"
                     print(log_message)
@@ -409,6 +411,12 @@ def INIT(render=True, agentname=None):
 
                     # Initialize epsilon
                     epsilon = self.epsilon_init
+
+                    # Counting steps
+                    steps = 0
+
+                    # Policy network optimizer, 'Adam' optimizer can be swapped with something else
+                    self.optimizer = torch.optim.Adam(policy_dqn.parameters(), lr=self.learning_rate_a)
 
                 # Initialize replay memory
                 memory = ReplayMemory(maxlen=self.replay_memory_size)
@@ -419,12 +427,6 @@ def INIT(render=True, agentname=None):
 
                 # List to keep track of the epsilon decay
                 epsilon_history = []
-
-                # Counting steps
-                steps = 0
-
-                # Policy network optimizer, 'Adam' optimizer can be swapped with something else
-                self.optimizer = torch.optim.Adam(policy_dqn.parameters(), lr=self.learning_rate_a)
 
                 # Track best reward
                 best_reward = -999999
@@ -532,7 +534,14 @@ def INIT(render=True, agentname=None):
                         with open(self.LOG_FILE, 'a') as file:
                             file.write(log_message + '\n')
 
-                        torch.save(policy_dqn.state_dict(), self.MODEL_FILE)
+                        # Saving the model
+                        torch.save({
+                            'model_state_dict': policy_dqn.state_dict(),
+                            'optimizer_state_dict': self.optimizer.state_dict(),
+                            'epsilon': epsilon,
+                            'step_count': steps
+                        }, self.MODEL_FILE)
+
                         best_reward = episode_reward
 
                     # Update graph every x seconds
@@ -549,17 +558,6 @@ def INIT(render=True, agentname=None):
                         # Decay epsilon
                         epsilon = max(epsilon * self.epsilon_decay, self.epsilon_min)
                         epsilon_history.append(epsilon)
-
-                        # Load the YAML file
-                        with open("hyperparameters.yml", "r") as file:
-                            data = yaml.safe_load(file)
-
-                        # Modifying the epsilon_last_value
-                        data["dinochrome1"]["epsilon_last_value"] = epsilon
-
-                        # Save the updated YAML file
-                        with open("hyperparameters.yml", "w") as file:
-                            yaml.dump(data, file, default_flow_style=False)
 
                         # Copy policy network to target network after a certain number of steps
                         if steps > self.network_sync_rate:
