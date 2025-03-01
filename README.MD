@@ -31,15 +31,10 @@ I'll edit the repository once I have footage of a run.
 ### Libraries
 
 - [`pygame`](https://www.pygame.org/docs/): For handling the game's graphics and events.
-- `os`: To manage file paths and system-related operations.
-- `random`: For generating random elements in the game.
 - [`numpy`](https://numpy.org/doc/): For numerical operations, such as handling state space data.
 - [`yaml`](https://pyyaml.org/wiki/PyYAMLDocumentation): To read and write configuration settings.
-- `itertools.count`: To create an infinite counter for tracking frames.
 - [`torch`](https://pytorch.org/docs/stable/index.html) & [`torch.nn`](https://pytorch.org/docs/stable/nn.html): The PyTorch framework for deep learning and building neural networks.
 - [`matplotlib.pyplot`](https://matplotlib.org/stable/api/pyplot_api.html) & [`matplotlib`](https://matplotlib.org/stable/contents.html): For visualizing training progress and results.
-- [`datetime`](https://docs.python.org/3/library/datetime.html) & [`timedelta`](https://docs.python.org/3/library/datetime.html#datetime.timedelta): For managing timestamps in logging and evaluation.
-- [`argparse`](https://docs.python.org/3/library/argparse.html): For parsing command-line arguments.
 
 ### Video References
 
