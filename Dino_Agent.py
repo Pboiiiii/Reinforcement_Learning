@@ -265,7 +265,7 @@ def INIT(render=True, agentname=None):
             SCREEN.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
             if self.x_pos_bg <= -image_width:
                 SCREEN.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
-                x_pos_bg = 0
+                self.x_pos_bg = 0
             self.x_pos_bg -= game_speed
 
 
