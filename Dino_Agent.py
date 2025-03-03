@@ -407,6 +407,9 @@ def INIT(render=True, agentname=None):
                     best_reward = checkpoint['best_reward']
                     memory = ReplayMemory(maxlen=self.replay_memory_size)
                     memory.load_state_dict(checkpoint['replay_memory'])
+
+                    #Just in case
+                    policy_dqn.train()
                 else:
                     log_message = f"No model file found\nStarting from scratch"
                     print(log_message)
