@@ -544,7 +544,7 @@ def INIT(render=True, agentname=None):
                             'epsilon': epsilon,
                             'step_count': steps,
                             'best_reward': episode_reward,
-                            'replay_memory': memory.state_dict()
+                            'replay_memory': memory.state_dict()["memory"]
                         }, self.MODEL_FILE)
 
                         best_reward = episode_reward
