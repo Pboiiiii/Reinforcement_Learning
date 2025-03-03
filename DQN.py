@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 class DQN(nn.Module):
 
-    def __init__(self, state_dim, action_dim, hidden_dim=256, enable_dueling_dqn=True):
+    def __init__(self, state_dim, action_dim, hidden_dim=256, enable_dueling_dqn=False):
         super(DQN, self).__init__()
 
         self.enable_dueling_dqn=enable_dueling_dqn
