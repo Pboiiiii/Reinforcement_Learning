@@ -407,10 +407,8 @@ def INIT(render=True, agentname=None):
                     epsilon = checkpoint['epsilon']
                     steps = checkpoint['step_count']
                     best_reward = checkpoint['best_reward']
-
-                    # Restore replay memory
                     memory = ReplayMemory(maxlen=self.replay_memory_size)
-                    memory.memory = deque(checkpoint['replay_memory'], maxlen=self.replay_memory_size)
+                    memory.load_state_dict(checkpoint['replay_memory'])
                 else:
                     log_message = f"No model file found\nStarting from scratch"
                     print(log_message)
@@ -548,7 +546,7 @@ def INIT(render=True, agentname=None):
                             'epsilon': epsilon,
                             'step_count': steps,
                             'best_reward': episode_reward,
-                            'replay_memory': list(memory.memory)  # Convert deque to a list for saving
+                            'replay_memory': memory.state_dict()
                         }, self.MODEL_FILE)
 
                         best_reward = episode_reward
