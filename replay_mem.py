@@ -23,4 +23,4 @@ class ReplayMemory():
         return {"memory": list(self.memory)}
 
     def load_state_dict(self, state_dict):
-        self.memory = deque(state_dict["memory"], maxlen=self.maxlen)
+        self.memory = deque(state_dict, maxlen=self.maxlen)
