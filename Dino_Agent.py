@@ -12,8 +12,6 @@ import matplotlib.pyplot as plt
 import matplotlib
 from datetime import datetime, timedelta
 import argparse
-from collections import deque
-
 
 
 # Global variables
