@@ -1,0 +1,9 @@
+cartpole1:
+  n_actions: 2
+  input_dims: 4
+  gamma: 0.99
+  alpha: 0.0003
+  gae_lambda: 0.95
+  policy_clip: 0.2
+  batch_size: 64
+  n_epochs: 10
