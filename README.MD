@@ -1,7 +1,5 @@
 # Reinforcement Learning
 
-## Description
-
 Applying different RL algorithm just for fun (and because I have plenty free time) \:D
 
 ---
