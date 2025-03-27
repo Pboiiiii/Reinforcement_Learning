@@ -13,6 +13,7 @@ import matplotlib
 from datetime import datetime, timedelta
 import argparse
 
+# Dinosaur code snipped from:    https://github.com/MaxRohowsky/chrome-dinosaur
 
 # Global variables
 game_speed = 20
