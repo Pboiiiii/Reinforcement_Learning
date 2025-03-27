@@ -1,0 +1,27 @@
+mountaincar1:
+  action_dim: 1
+  state_dim: 2
+  hidden_dim1: 300
+  hidden_dim2: 400
+  gamma: 0.99
+  tau: 0.001
+  alpha: 0.000025
+  beta: 0.00025
+  theta: 0.15
+  sigma: 0.3
+  memory_size: 1000000
+  batch_size: 64
+
+bipedrobot:
+  action_dim: 6
+  state_dim: 31
+  hidden_dim1: 500
+  hidden_dim2: 700
+  gamma: 0.99
+  tau: 0.001
+  alpha: 0.000025
+  beta: 0.00025
+  theta: 0.15
+  sigma: 0.3
+  memory_size: 1000000
+  batch_size: 64
