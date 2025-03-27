@@ -7,6 +7,8 @@ import argparse
 import time
 import os
 
+# Applying DDPG algorith to solve the bipedal robot problem.
+# It will not converge since the robot goes flying when a certain amount of torques are applied to the robot joints :(
 
 if __name__ == '__main__':
     # Parse command line inputs
